@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kado Digital</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #f3ead9;
+    --dark: #1a0f0a;
+    --accent: #d99a53;
+    --accent2: #8c2f3b;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px 24px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease;
+  }
+
+  .stage.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* ===== SCREEN 1: ENVELOPE ===== */
+  #screen-envelope {
+    background: radial-gradient(circle at top, #3a1420, #1a0f0a 70%);
+  }
+
+  .envelope {
+    width: 230px;
+    height: 160px;
+    background: linear-gradient(135deg, #fdf6ec, #f2e4cf);
+    border-radius: 4px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    cursor: pointer;
+    animation: floaty 3s ease-in-out infinite;
+  }
+
+  .envelope::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 0; height: 0;
+    border-left: 115px solid transparent;
+    border-right: 115px solid transparent;
+    border-top: 90px solid #e8d3b5;
+  }
+
+  .envelope-label {
+    position: absolute;
+    bottom: 22px;
+    width: 100%;
+    font-style: italic;
+    font-size: 15px;
+    color: #6b4a3a;
+  }
+
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .hint {
+    margin-top: 28px;
+    color: #cbb6a8;
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+
+  /* ===== SCREEN 2: KAMERA ===== */
+  #screen-camera {
+    background: radial-gradient(circle at top, #2b1208, #0d0604 70%);
+    color: var(--cream);
+  }
+
+  .tag {
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  #screen-camera h1, #screen-shoot h1 {
+    font-size: 22px;
+    margin-bottom: 26px;
+    max-width: 320px;
+  }
+
+  .camera-body {
+    width: 190px;
+    height: 150px;
+    background: linear-gradient(145deg, #c88a4c, #9a6530);
+    border-radius: 14px;
+    position: relative;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    margin-bottom: 10px;
+  }
+
+  .camera-top {
+    position: absolute;
+    top: -14px; left: 14px; right: 14px;
+    height: 22px;
+    background: #222;
+    border-radius: 6px 6px 0 0;
+  }
+
+  .camera-lens {
+    position: absolute;
+    left: 24px; top: 55px;
+    width: 46px; height: 46px;
+    background: #111;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 5px #333;
+  }
+
+  .camera-flash {
+    position: absolute;
+    right: 20px; top: 12px;
+    width: 30px; height: 20px;
+    background: #ddd;
+    border-radius: 3px;
+  }
+
+  .camera-sticker {
+    position: absolute;
+    left: 50%;
+    top: 62px;
+    transform: translateX(-50%);
+    background: #f3ead9;
+    color: #333;
+    font-family: 'Brush Script MT', cursive, Georgia;
+    font-size: 15px;
+    padding: 3px 14px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .film-label {
+    font-size: 11px;
+    color: #a98f7c;
+    letter-spacing: 2px;
+    margin-top: 8px;
+    margin-bottom: 30px;
+  }
+
+  button.main-btn {
+    background: var(--accent);
+    color: #2a1507;
+    border: none;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 14px 32px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.15s ease;
+  }
+
+  button.main-btn:active { transform: scale(0.96); }
+
+  /* ===== SCREEN 3: JEPRET ===== */
+  #screen-shoot { background: radial-gradient(circle at top, #2b1208, #0d0604 70%); color: var(--cream); }
+
+  .counter-badge {
+    position: absolute;
+    top: -8px; right: -8px;
+    background: #fff;
+    color: #333;
+    font-size: 11px;
+    font-weight: bold;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .film-strip {
+    display: flex;
+    gap: 6px;
+    width: 260px;
+    height: 60px;
+    background: #000;
+    border-radius: 4px;
+    padding: 6px;
+    margin-top: 18px;
+  }
+
+  .film-slot {
+    flex: 1;
+    background: #2a1a10;
+    border-radius: 2px;
+    transition: background 0.4s ease;
+  }
+
+  .film-slot.filled {
+    background: linear-gradient(135deg, #c88a4c, #8c5a2c);
+  }
+
+  .shoot-caption {
+    margin-top: 18px;
+    font-size: 13px;
+    color: #cbb6a8;
+  }
+
+  /* ===== SCREEN 4: DIJEMUR (loading) ===== */
+  #screen-drying {
+    background: radial-gradient(circle at top, #4a1414, #140606 70%);
+    color: var(--cream);
+  }
+
+  .drying-label {
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .drying-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .drying-thumb {
+    width: 70px; height: 90px;
+    background: #d8c7b0;
+    border-radius: 2px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: appear 0.6s ease forwards;
+    overflow: hidden;
+  }
+
+  .drying-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+  .drying-thumb:nth-child(1) { animation-delay: 0.3s; }
+  .drying-thumb:nth-child(2) { animation-delay: 0.9s; }
+  .drying-thumb:nth-child(3) { animation-delay: 1.5s; }
+  .drying-thumb:nth-child(4) { animation-delay: 2.1s; }
+
+  @keyframes appear {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== SCREEN 5: REVEAL ===== */
+  #screen-reveal {
+    background: linear-gradient(160deg, #f6ecdb, #ede0c9);
+    color: #3a2b1d;
+  }
+
+  .reveal-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #8a7256;
+    margin-bottom: 14px;
+  }
+
+  .flip-card {
+    width: 280px;
+    height: 180px;
+    position: relative;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+
+  .flip-inner {
+    width: 100%; height: 100%;
+    position: relative;
+    transition: transform 0.7s ease;
+    transform-style: preserve-3d;
+  }
+
+  .flip-card.flipped .flip-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 6px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .flip-front {
+    background: #c9a876;
+    padding: 14px;
+  }
+
+  .flip-front .strip-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: #4a3621;
+    margin-bottom: 8px;
+    font-family: Georgia, serif;
+  }
+
+  .photo-strip {
+    flex: 1;
+    display: flex;
+    gap: 4px;
+    background: #000;
+    padding: 4px;
+    border-radius: 2px;
+  }
+
+  .photo-strip .ph {
+    flex: 1;
+    background: #555;
+    border-radius: 1px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 9px;
+  }
+
+  .photo-strip .ph img { width: 100%; height: 100%; object-fit: cover; }
+
+  .flip-back {
+    background: #fbf5e8;
+    transform: rotateY(180deg);
+    padding: 22px;
+    text-align: left;
+    font-style: italic;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #4a3621;
+    overflow-y: auto;
+  }
+
+  .flip-back .sign {
+    text-align: right;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+
+  .tap-hint {
+    margin-top: 14px;
+    font-size: 12px;
+    color: #8a7256;
+  }
+
+  .reveal-actions {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 280px;
+  }
+
+  .reveal-actions button, .reveal-actions a {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 12px;
+    border-radius: 24px;
+    border: 1px solid #c9a876;
+    background: transparent;
+    color: #4a3621;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+  }
+
+  .reveal-actions .filled {
+    background: var(--accent);
+    border: none;
+    color: #2a1507;
+    font-weight: bold;
+  }
+
+  .note-final {
+    margin-top: 16px;
+    font-size: 12px;
+    color: #8a7256;
+    max-width: 280px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ======================= SCREEN 1: AMPLOP ======================= -->
+<div class="stage active" id="screen-envelope">
+  <div class="envelope" onclick="goTo('screen-camera')">
+    <div class="envelope-label">Untuk </div>
+  </div>
+  <div class="hint">ketuk amplopnya</div>
+</div>
+
+<!-- ======================= SCREEN 2: KAMERA ======================= -->
+<div class="stage" id="screen-camera">
+  <div class="tag">Ruang Gelap</div>
+  <h1>Ada satu rol yang belum dicuci,<br>isinya tentang kamu.</h1>
+
+  <div class="camera-body">
+    <div class="camera-top"></div>
+    <div class="camera-flash"></div>
+    <div class="camera-lens"></div>
+    <div class="camera-sticker"> </div>
+  </div>
+  <div class="film-label">GOLD 200 &middot; 4 EXP</div>
+
+  <button class="main-btn" onclick="goTo('screen-shoot')">Ambil kameranya</button>
+</div>
+
+<!-- ======================= SCREEN 3: JEPRET ======================= -->
+<div class="stage" id="screen-shoot">
+  <div class="tag">Jepret</div>
+  <h1>Setiap jepretan nyimpen satu alasan<br>kenapa ulang tahunmu spesial.</h1>
+
+  <div style="position:relative;">
+    <div class="camera-body" style="margin-bottom:0;">
+      <div class="camera-top"></div>
+      <div class="camera-flash"></div>
+      <div class="camera-lens"></div>
+      <div class="camera-sticker"> </div>
+    </div>
+    <div class="counter-badge" id="counterBadge">4</div>
+  </div>
+
+  <div class="film-strip" id="filmStrip">
+    <div class="film-slot"></div>
+    <div class="film-slot"></div>
+    <div class="film-slot"></div>
+    <div class="film-slot"></div>
+  </div>
+
+  <div class="shoot-caption" id="shootCaption">Ketuk tombolnya buat jepret satu-satu.</div>
+
+  <button class="main-btn" style="margin-top:22px;" onclick="shoot()">Jepret</button>
+</div>
+
+<!-- ======================= SCREEN 4: DIJEMUR ======================= -->
+<div class="stage" id="screen-drying">
+  <div class="drying-label">Dijemur</div>
+  <div class="drying-row">
+    <div class="drying-thumb"><img src="foto1.jpg" onerror="this.style.display='none'"></div>
+    <div class="drying-thumb"><img src="foto2.jpg" onerror="this.style.display='none'"></div>
+    <div class="drying-thumb"><img src="foto3.jpg" onerror="this.style.display='none'"></div>
+    <div class="drying-thumb"><img src="foto4.jpg" onerror="this.style.display='none'"></div>
+  </div>
+</div>
+
+<!-- ======================= SCREEN 5: REVEAL ======================= -->
+<div class="stage" id="screen-reveal">
+  <div class="reveal-label">Amplop Cuci Foto</div>
+
+  <div class="flip-card" id="flipCard" onclick="flipCard()">
+    <div class="flip-inner">
+
+      <div class="flip-face flip-front">
+        <div class="strip-top">
+          <span>GOLD 200</span>
+          <span>buat </span>
+        </div>
+        <div class="photo-strip">
+          <div class="ph"><img src="foto1.jpg" onerror="this.parentElement.textContent='01'"></div>
+          <div class="ph"><img src="foto2.jpg" onerror="this.parentElement.textContent='02'"></div>
+          <div class="ph"><img src="foto3.jpg" onerror="this.parentElement.textContent='03'"></div>
+          <div class="ph"><img src="foto4.jpg" onerror="this.parentElement.textContent='04'"></div>
+        </div>
+      </div>
+
+      <div class="flip-face flip-back">
+        <!-- ===== GANTI ISI SURAT DI BAWAH SESUAI KEINGINAN KAMU ===== -->
+        <div>
+          Buat ,<br><br>
+          selamat ulang tahun! Semoga setahun ke depan penuh hal baik,
+          sehat terus, dan lancar semua urusannya.<br><br>
+          Makasih udah jadi kakak kelas yang seru buat diajak cerita.
+        </div>
+        <div class="sign">— </div>
+        <!-- =========================================================== -->
+      </div>
+
+    </div>
+  </div>
+
+  <div class="tap-hint">ketuk buat baca suratnya</div>
+
+  <div class="reveal-actions">
+    <button class="filled" onclick="shareStrip()">Bagikan stripnya</button>
+    <button onclick="saveImage()">Simpan gambarnya</button>
+  </div>
+  <div class="note-final">Selamat ulang tahun, ! 🎉</div>
+</div>
+
+<script>
+function goTo(id) {
+  document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+let shots = 0;
+const total = 4;
+
+function shoot() {
+  if (shots >= total) return;
+  const slots = document.querySelectorAll('.film-slot');
+  slots[shots].classList.add('filled');
+  shots++;
+  document.getElementById('counterBadge').textContent = total - shots;
+
+  if (shots < total) {
+    document.getElementById('shootCaption').textContent =
+      'Sisa ' + (total - shots) + ' jepretan lagi.';
+  } else {
+    document.getElementById('shootCaption').textContent = 'Rol-nya penuh. Dikirim buat dicuci...';
+    setTimeout(() => {
+      goTo('screen-drying');
+      setTimeout(() => goTo('screen-reveal'), 3200);
+    }, 1200);
+  }
+}
+
+function flipCard() {
+  document.getElementById('flipCard').classList.toggle('flipped');
+}
+
+function shareStrip() {
+  if (navigator.share) {
+    navigator.share({
+      title: 'Kado buat ',
+      text: 'Selamat ulang tahun, ! 🎉',
+      url: window.location.href
+    }).catch(() => {});
+  } else {
+    alert('Share tidak didukung di browser ini. Kamu bisa screenshot layar ini aja.');
+  }
+}
+
+function saveImage() {
+  alert('Screenshot bagian strip foto di atas, lalu simpan ke galerimu ya 📸');
+}
+</script>
+
+</body>
+</html>
